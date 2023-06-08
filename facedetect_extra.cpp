@@ -4,7 +4,9 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include <iostream>
+
 #include  "frutinha.h"
+#include "frutinha.cpp"
 
 using namespace std;
 using namespace cv;
@@ -25,7 +27,7 @@ int main( int argc, const char** argv )
     CascadeClassifier cascade;
     double scale;
 
-    cascadeName = "C:/teste/haarcascade_frontalface_default.xml";
+    cascadeName = "haarcascade_frontalface_default.xml";
     scale = 1; // usar 1, 2, 4.
     if (scale < 1)
         scale = 1;
@@ -152,7 +154,8 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
         //condição em que o rosto esta na laranja
         if(laranja.getX() > cvRound(r.x) && laranja.getX() < cvRound((r.x + r.width-1)) && laranja.getY() > cvRound(r.y) && laranja.getY() < cvRound((r.y + r.height-1)) && laranja.getComeu() == 0){
                 j++;
-                laranja.setComeu(1);     
+                laranja.setComeu(1);
+                system("play -q SOM.ogg");     
                 laranja.move();           
         }
 
@@ -180,7 +183,7 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
     
    
     // Desenha uma imagem
-        Mat overlay = cv::imread("C:/teste/orange.png", IMREAD_UNCHANGED);
+        Mat overlay = cv::imread("noz.png", IMREAD_UNCHANGED);
             drawTransparency(img, overlay, laranja.getX(), laranja.getY());
 
     // Desenha o frame na tela

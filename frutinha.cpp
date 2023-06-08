@@ -1,4 +1,4 @@
-#include "Frutinha.h"
+#include "frutinha.h"
 #include <cstdlib>
 
 Frutinha::Frutinha(){
