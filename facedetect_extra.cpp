@@ -4,9 +4,10 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include <iostream>
+#include <windows.h>
 
 #include  "frutinha.h"
-#include "frutinha.cpp"
+//#include "frutinha.cpp"
 
 using namespace std;
 using namespace cv;
@@ -27,7 +28,8 @@ int main( int argc, const char** argv )
     CascadeClassifier cascade;
     double scale;
 
-    cascadeName = "haarcascade_frontalface_default.xml";
+    cascadeName = "C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\haarcascade_frontalface_default.xml";
+    //cascadeName = "haarcascade_frontalface_default.xml";
     scale = 1; // usar 1, 2, 4.
     if (scale < 1)
         scale = 1;
@@ -144,9 +146,16 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
     {
         
         Rect r = faces[i];
-        rectangle( img, Point(cvRound(r.x), cvRound(r.y)),
-                    Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
-                    color, 3); //rectangle(img, UPPER_RIGHT, BOTTOM_LEFT)
+        // Desenha uma imagem
+         Mat overlay3 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\esquilo.png", IMREAD_UNCHANGED);
+        //Mat overlay = cv::imread("esquilo.png", IMREAD_UNCHANGED);
+        try{
+            drawTransparency(img, overlay3, cvRound(r.x), cvRound(r.y));
+            }catch(Exception e){}
+
+        //rectangle( img, Point(cvRound(r.x), cvRound(r.y)),
+                    //Point(cvRound((r.x + r.width-1)), cvRound((r.y + r.height-1))),
+                    //color, 0); //rectangle(img, UPPER_RIGHT, BOTTOM_LEFT)
 
         
         
@@ -155,36 +164,33 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
         if(laranja.getX() > cvRound(r.x) && laranja.getX() < cvRound((r.x + r.width-1)) && laranja.getY() > cvRound(r.y) && laranja.getY() < cvRound((r.y + r.height-1)) && laranja.getComeu() == 0){
                 j++;
                 laranja.setComeu(1);
-                system("play -q SOM.ogg");     
+                //Beep(523,500); // som WINDOWS
+                //system("play -q SOM.ogg"); //som LINUX    
                 laranja.move();           
         }
-
-        //condição em que o rosto esta fora da laranja
-        // if(laranja.getX()- r.width > cvRound(r.x) && laranja.getX()- r.width < cvRound((r.x + r.width-1)) && laranja.getY()-r.height > cvRound(r.y) && laranja.getY()-r.height < cvRound((r.y + r.height-1))){
-        //     comeu = 0;
-        // }
-        
-    //    if(200 > cvRound(r.x) && 200 < cvRound((r.x + r.width-1)) && 350-r.height > cvRound(r.y) && 350-r.height < cvRound((r.y + r.height-1)))
-    //    {     comeu = 0;
-    //         //putText	(img, "COMEU", Point(300, 150), FONT_HERSHEY_PLAIN, 2, color); // fonte
-    //         }
-        // else{
-        //     putText	(img, "COMEU", Point(300, 150), FONT_HERSHEY_PLAIN, 2, color); // fonte
-        //     comeu = 0;
-        // }
 
     }
 
         
-
-    color = Scalar(0,0,255);
-    putText	(img, "Placar: " + to_string(j), Point(300, 50), FONT_HERSHEY_PLAIN, 2, color); // fonte
+    Mat overlay1 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cerca.png", IMREAD_UNCHANGED);
+    //Mat overlay = cv::imread("cerca.png", IMREAD_UNCHANGED);
+        int cercaX = 45;
+        drawTransparency(img, overlay1, cercaX, 10);
+        drawTransparency(img, overlay1, cercaX+=75, 10);
+        drawTransparency(img, overlay1, cercaX+=75, 10);
+        drawTransparency(img, overlay1, cercaX+=75, 10);
+        drawTransparency(img, overlay1, cercaX+=75, 10);
+        drawTransparency(img, overlay1, cercaX+=75, 10);
+        drawTransparency(img, overlay1, cercaX+=75, 10);
+    color = Scalar(245,245,245);
+    putText	(img, "Placar: " + to_string(j), Point(200, 50), FONT_HERSHEY_TRIPLEX, 1.5, color); // fonte
 
     
    
     // Desenha uma imagem
-        Mat overlay = cv::imread("noz.png", IMREAD_UNCHANGED);
-            drawTransparency(img, overlay, laranja.getX(), laranja.getY());
+         Mat overlay2 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\noz.png", IMREAD_UNCHANGED);
+        //Mat overlay = cv::imread("noz.png", IMREAD_UNCHANGED);
+            drawTransparency(img, overlay2, laranja.getX(), laranja.getY());
 
     // Desenha o frame na tela
     imshow( "result", img );

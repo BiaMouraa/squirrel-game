@@ -8,8 +8,8 @@ Frutinha::Frutinha(){
 }
 
 void Frutinha::move(){
-    eixoX = rand() % 560 + 40;
-    eixoY = rand() % 400 + 30;
+    eixoX = rand() % 460 + 10;
+    eixoY = rand() % 360 + 10;
     comeu = 0;
 }
 
