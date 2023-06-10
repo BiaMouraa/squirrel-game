@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string>
 #include <chrono>
+#include <fstream>
+#include <thread>
 //#include <windows.h>
 
 #include  "frutinha.h"
@@ -16,76 +18,31 @@ using namespace cv;
 using namespace std::chrono;
 
 void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool tryflip);
+void drawTransparency(Mat frame, Mat transp, int xPos, int yPos);
+void drawTransRect(Mat frame, Scalar color, double alpha, Rect region);
 
 string cascadeName;
 
-
-
-int main( int argc, const char** argv )
-{
-    VideoCapture capture;
-    Mat frame;
-    bool tryflip;
-    CascadeClassifier cascade;
-    double scale;
-    string PNG;
-
-
-    //cascadeName = "C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\haarcascade_frontalface_default.xml";
-    cascadeName = "haarcascade_frontalface_default.xml";
-    scale = 1; // usar 1, 2, 4.
-    if (scale < 1)
-        scale = 1;
-    tryflip = true;
-
-    if (!cascade.load(cascadeName)) {
-        cerr << "ERROR: Could not load classifier cascade" << endl;
-        return -1;
+void salvarPlacar(int placar) {
+    ofstream arquivo("recorde.txt");
+    if (arquivo.is_open()) {
+        arquivo << placar;
+        arquivo.close();
     }
-
-    // if(!capture.open("video.mp4")) // para testar com um video
-    if(!capture.open(0))
-    {
-        cout << "Capture from camera #0 didn't work" << endl;
-        return 1;
-    }
-
-    if( capture.isOpened() ) {
-        cout << "Video capturing has been started ..." << endl;
-
-        auto start = steady_clock::now();
-        auto end = steady_clock::now();
-
-        for(;;)
-        {
-            capture >> frame;
-            if( frame.empty() )
-                break;
-
-            end = steady_clock::now();
-            auto gasto = end - start;
-            cout << "Tempo: " << duration_cast<seconds>(gasto).count() << " s" << endl;
-
-            if(duration_cast<seconds>(gasto).count() == 30){
-                break;
-            }
-
-            detectAndDraw( frame, cascade, scale, tryflip   );
-            
-
-            char c = (char)waitKey(10);
-            if( c == 27 || c == 'q' || c == 'Q' )
-                break;
-        }
-
-        //auto end = steady_clock::now();
-        auto gasto = end - start;
-        //cout << "Tempo: " << duration<double>{gasto}.count() << " s" << endl;
-
-    }
-
-    return 0;
 }
+
+int lerRecorde() {
+    ifstream arquivo("recorde.txt");
+    int recorde = 0;
+    if (arquivo.is_open()) {
+        arquivo >> recorde;
+        arquivo.close();
+    }
+    return recorde;
+}
+
+int recorde = lerRecorde();
+int temporizador = 0;
 
 /**
  * @brief Draws a transparent image over a frame Mat.
@@ -188,31 +145,183 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
                 system("play -q SOM.ogg"); //som LINUX    
                 laranja.move();          
         }
-
+        
+        if (j > recorde) {
+            recorde = j;
+            salvarPlacar(recorde);
+            cout << "Novo recorde: " << recorde << endl;
+        }
     }
 
         
     //Mat overlay1 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cerca.png", IMREAD_UNCHANGED);
     Mat overlay1 = cv::imread("cerca.png", IMREAD_UNCHANGED);
-        int cercaX = 45;
-        drawTransparency(img, overlay1, cercaX, 10);
-        drawTransparency(img, overlay1, cercaX+=75, 10);
-        drawTransparency(img, overlay1, cercaX+=75, 10);
-        drawTransparency(img, overlay1, cercaX+=75, 10);
-        drawTransparency(img, overlay1, cercaX+=75, 10);
-        drawTransparency(img, overlay1, cercaX+=75, 10);
-        drawTransparency(img, overlay1, cercaX+=75, 10);
+    int cercaX = 45;
+    drawTransparency(img, overlay1, cercaX, 10);
+    drawTransparency(img, overlay1, cercaX+=75, 10);
+    drawTransparency(img, overlay1, cercaX+=75, 10);
+    drawTransparency(img, overlay1, cercaX+=75, 10);
+    drawTransparency(img, overlay1, cercaX+=75, 10);
+    drawTransparency(img, overlay1, cercaX+=75, 10);
+    drawTransparency(img, overlay1, cercaX+=75, 10);
     color = Scalar(245,245,245);
     putText	(img, "Placar: " + to_string(j), Point(200, 50), FONT_HERSHEY_TRIPLEX, 1.5, color); // fonte
+    putText	(img, "Recorde: " + to_string(recorde), Point(200, 100), FONT_HERSHEY_TRIPLEX, 1.5, color); // fonte
+    putText	(img, "Tempo: " + to_string(temporizador) + "s", Point(200, 150), FONT_HERSHEY_TRIPLEX, 1.5, color); // fonte
 
-    
-   
     // Desenha uma imagem
          //Mat overlay2 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\noz.png", IMREAD_UNCHANGED);
 
-        Mat overlay2 = cv::imread("NOZSFundo.png", IMREAD_UNCHANGED);
-            drawTransparency(img, overlay2, laranja.getX(), laranja.getY());
+    Mat overlay2 = cv::imread("NOZSFundo.png", IMREAD_UNCHANGED);
+    drawTransparency(img, overlay2, laranja.getX(), laranja.getY());
 
     // Desenha o frame na tela
     imshow( "result", img );
+}
+
+void drawGameOver(Mat& imgGameOver, bool& restart, bool& quit) {
+    Scalar black = Scalar(0, 0, 0);
+    drawTransRect(imgGameOver, black, 0.8, Rect( 0, 0, imgGameOver.cols, imgGameOver.rows));
+
+    putText(imgGameOver, "Game Over", Point(100, 100), FONT_HERSHEY_SIMPLEX, 2, Scalar(0, 0, 255), 3);
+    putText(imgGameOver, "Placar: " + to_string(j), Point(100, 150), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
+    putText(imgGameOver, "Recorde: " + to_string(recorde), Point(100, 200), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
+    putText(imgGameOver, "Pressione 'R' para Reiniciar o jogo", Point(100, 400), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
+    putText(imgGameOver, "Pressione 'Q' para Sair do jogo", Point(100, 450), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
+
+    imshow("result", imgGameOver);
+
+
+    char key = (char)waitKey(0);
+    if (key == 'r' || key == 'R') {
+        restart = true;
+    } else if (key == 'q' || key == 'Q') {
+        quit = true;
+    }
+}
+
+void drawMenu(Mat &img) {
+    flip(img, img, 1);
+    Scalar black = Scalar(0, 0, 0);
+    drawTransRect(img, black, 0.8, Rect( 0, 0, img.cols, img.rows));
+
+    putText(img, "MENU", Point(100, 100), FONT_HERSHEY_SIMPLEX, 2, Scalar(0, 0, 255), 3);
+    putText(img, "Recorde: " + to_string(recorde), Point(100, 200), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
+    putText(img, "Pressione 'I' para iniciar o jogo", Point(100, 400), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
+    putText(img, "Pressione 'Q' para sair do jogo", Point(100, 450), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
+
+    imshow("result", img);
+    // waitKey(0);
+}
+
+
+int main(int argc, const char** argv)
+{
+    VideoCapture capture;
+    Mat frame;
+    bool tryflip;
+    CascadeClassifier cascade;
+    double scale;
+    string PNG;
+
+    //cascadeName = "C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\haarcascade_frontalface_default.xml";
+    cascadeName = "haarcascade_frontalface_default.xml";
+    scale = 1; // usar 1, 2, 4.
+    if (scale < 1)
+        scale = 1;
+    tryflip = true;
+
+    if (!cascade.load(cascadeName)) {
+        cerr << "ERROR: Could not load classifier cascade" << endl;
+    }
+
+    // if(!capture.open("video.mp4")) // para testar com um video
+    if(!capture.open(0))
+    {
+        cout << "Capture from camera #0 didn't work" << endl;
+    }
+
+    if( capture.isOpened() ) {
+        cout << "Video capturing has been started ..." << endl;
+
+        int placar = 0;
+        int recorde = lerRecorde();
+
+        bool menuAtivo = true;
+        bool jogoIniciado = false;
+        bool iniciarContagem = false;
+        
+        while(frame.empty()){
+            capture >> frame;
+        }
+
+        drawMenu(frame);
+
+        while (menuAtivo) {
+            char opcao = (char)waitKey(10);
+            if (opcao == ' ') {
+                break;
+            }
+            if (opcao == 'q' || opcao == 'Q') {
+                // Sair do jogo
+                cout << "Fechando..." << endl;
+                return 0;
+            }
+            if (opcao == 'i' || opcao == 'I') {
+                // Iniciar o jogo
+                cout << "Iniciando o jogo..." << endl;
+                menuAtivo = false;
+                jogoIniciado = true;
+                iniciarContagem = true;
+                temporizador = 0;
+                j = 0;
+            }
+        }
+        
+        if (jogoIniciado && !menuAtivo) {
+            auto start = steady_clock::now();
+            auto end = steady_clock::now();
+            while (jogoIniciado && !menuAtivo) {
+                for(;;)
+                {
+                    capture >> frame;
+                    if( frame.empty() )
+                        break;
+
+                    end = steady_clock::now();
+                    auto gasto = end - start;
+                    temporizador = duration_cast<seconds>(gasto).count();
+                    cout << "Tempo: " << temporizador << "s" << endl;
+
+                    if (iniciarContagem && temporizador >= 5) {
+                        jogoIniciado = false;
+                        menuAtivo = true;
+                        iniciarContagem = false;
+                        temporizador = 0;
+                    }
+
+                    if (!jogoIniciado && menuAtivo) {
+                        drawGameOver(frame, jogoIniciado, menuAtivo);
+                        temporizador = 0;
+                        j = 0;
+                    }
+
+                    detectAndDraw( frame, cascade, scale, tryflip );
+                    
+                    char c = (char)waitKey(10);
+                    if( c == 27 || c == 'q' || c == 'Q' )
+                        return 0;
+                }
+            }
+
+            auto gasto = end - start;
+        }   
+
+        //auto end = steady_clock::now();
+        
+        //cout << "Tempo: " << duration<double>{gasto}.count() << " s" << endl;
+
+        // this_thread::sleep_for(seconds(2));
+    }
+    return 0;
 }
