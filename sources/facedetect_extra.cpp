@@ -4,15 +4,16 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include <iostream>
-#include <windows.h>
+#include <string>
+#include <chrono>
+//#include <windows.h>
 
 #include  "frutinha.h"
-//#include "frutinha.cpp"
+#include "frutinha.cpp"
 
 using namespace std;
 using namespace cv;
-
-
+using namespace std::chrono;
 
 void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool tryflip);
 
@@ -27,9 +28,11 @@ int main( int argc, const char** argv )
     bool tryflip;
     CascadeClassifier cascade;
     double scale;
+    string PNG;
 
-    cascadeName = "C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\haarcascade_frontalface_default.xml";
-    //cascadeName = "haarcascade_frontalface_default.xml";
+
+    //cascadeName = "C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\haarcascade_frontalface_default.xml";
+    cascadeName = "haarcascade_frontalface_default.xml";
     scale = 1; // usar 1, 2, 4.
     if (scale < 1)
         scale = 1;
@@ -50,19 +53,35 @@ int main( int argc, const char** argv )
     if( capture.isOpened() ) {
         cout << "Video capturing has been started ..." << endl;
 
+        auto start = steady_clock::now();
+        auto end = steady_clock::now();
+
         for(;;)
         {
             capture >> frame;
             if( frame.empty() )
                 break;
 
-            detectAndDraw( frame, cascade, scale, tryflip );
+            end = steady_clock::now();
+            auto gasto = end - start;
+            cout << "Tempo: " << duration_cast<seconds>(gasto).count() << " s" << endl;
+
+            if(duration_cast<seconds>(gasto).count() == 30){
+                break;
+            }
+
+            detectAndDraw( frame, cascade, scale, tryflip   );
             
 
             char c = (char)waitKey(10);
             if( c == 27 || c == 'q' || c == 'Q' )
                 break;
         }
+
+        //auto end = steady_clock::now();
+        auto gasto = end - start;
+        //cout << "Tempo: " << duration<double>{gasto}.count() << " s" << endl;
+
     }
 
     return 0;
@@ -112,6 +131,7 @@ Frutinha laranja;
 
 void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool tryflip)
 {
+
     double t = 0;
     vector<Rect> faces;
     Mat gray, smallImg;
@@ -136,7 +156,7 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
         |CASCADE_SCALE_IMAGE,
         Size(40, 40) );
     t = (double)getTickCount() - t;
-    printf( "detection time = %g ms\n", t*1000/getTickFrequency());
+    //printf( "detection time = %g ms\n", t*1000/getTickFrequency());
     // PERCORRE AS FACES ENCONTRADAS
     
    
@@ -147,10 +167,10 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
         
         Rect r = faces[i];
         // Desenha uma imagem
-         Mat overlay3 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\esquilo.png", IMREAD_UNCHANGED);
-        //Mat overlay = cv::imread("esquilo.png", IMREAD_UNCHANGED);
+        //Mat overlay3 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\esquilo.png", IMREAD_UNCHANGED);
+        Mat overlay3 = cv::imread("esquiloSFundo.png", IMREAD_UNCHANGED);
         try{
-            drawTransparency(img, overlay3, cvRound(r.x), cvRound(r.y));
+           drawTransparency(img, overlay3, cvRound(r.x), cvRound(r.y));
             }catch(Exception e){}
 
         //rectangle( img, Point(cvRound(r.x), cvRound(r.y)),
@@ -165,15 +185,15 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
                 j++;
                 laranja.setComeu(1);
                 //Beep(523,500); // som WINDOWS
-                //system("play -q SOM.ogg"); //som LINUX    
-                laranja.move();           
+                system("play -q SOM.ogg"); //som LINUX    
+                laranja.move();          
         }
 
     }
 
         
-    Mat overlay1 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cerca.png", IMREAD_UNCHANGED);
-    //Mat overlay = cv::imread("cerca.png", IMREAD_UNCHANGED);
+    //Mat overlay1 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cerca.png", IMREAD_UNCHANGED);
+    Mat overlay1 = cv::imread("cerca.png", IMREAD_UNCHANGED);
         int cercaX = 45;
         drawTransparency(img, overlay1, cercaX, 10);
         drawTransparency(img, overlay1, cercaX+=75, 10);
@@ -188,8 +208,9 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
     
    
     // Desenha uma imagem
-         Mat overlay2 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\noz.png", IMREAD_UNCHANGED);
-        //Mat overlay = cv::imread("noz.png", IMREAD_UNCHANGED);
+         //Mat overlay2 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\noz.png", IMREAD_UNCHANGED);
+
+        Mat overlay2 = cv::imread("NOZSFundo.png", IMREAD_UNCHANGED);
             drawTransparency(img, overlay2, laranja.getX(), laranja.getY());
 
     // Desenha o frame na tela
