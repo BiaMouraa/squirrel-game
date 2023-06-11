@@ -4,14 +4,14 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/videoio.hpp"
 #include <iostream>
+#include <vector>
 #include <string>
 #include <chrono>
 #include <fstream>
 #include <thread>
-//#include <windows.h>
 
 #include  "frutinha.h"
-#include "frutinha.cpp"
+//#include "frutinha.cpp"
 
 using namespace std;
 using namespace cv;
@@ -124,8 +124,8 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
         
         Rect r = faces[i];
         // Desenha uma imagem
-        //Mat overlay3 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\esquilo.png", IMREAD_UNCHANGED);
-        Mat overlay3 = cv::imread("esquiloSFundo.png", IMREAD_UNCHANGED);
+        Mat overlay3 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\esquiloSFundo.png", IMREAD_UNCHANGED);
+        //Mat overlay3 = cv::imread("esquiloSFundo.png", IMREAD_UNCHANGED);
         try{
            drawTransparency(img, overlay3, cvRound(r.x), cvRound(r.y));
             }catch(Exception e){}
@@ -141,8 +141,7 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
         if(laranja.getX() > cvRound(r.x) && laranja.getX() < cvRound((r.x + r.width-1)) && laranja.getY() > cvRound(r.y) && laranja.getY() < cvRound((r.y + r.height-1)) && laranja.getComeu() == 0){
                 j++;
                 laranja.setComeu(1);
-                //Beep(523,500); // som WINDOWS
-                system("play -q SOM.ogg"); //som LINUX    
+                //system("play -q SOM.ogg"); //som LINUX    
                 laranja.move();          
         }
         
@@ -154,25 +153,41 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
     }
 
         
-    //Mat overlay1 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cerca.png", IMREAD_UNCHANGED);
-    Mat overlay1 = cv::imread("cerca.png", IMREAD_UNCHANGED);
-    int cercaX = 45;
-    drawTransparency(img, overlay1, cercaX, 10);
-    drawTransparency(img, overlay1, cercaX+=75, 10);
-    drawTransparency(img, overlay1, cercaX+=75, 10);
-    drawTransparency(img, overlay1, cercaX+=75, 10);
-    drawTransparency(img, overlay1, cercaX+=75, 10);
-    drawTransparency(img, overlay1, cercaX+=75, 10);
-    drawTransparency(img, overlay1, cercaX+=75, 10);
+    Mat overlay1 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cerca.png", IMREAD_UNCHANGED);
+   // Mat overlay1 = cv::imread("cerca.png", IMREAD_UNCHANGED);
+    int cerca1 = 45;
+    drawTransparency(img, overlay1, cerca1, 10);
+    drawTransparency(img, overlay1, cerca1+=75, 10);
+    drawTransparency(img, overlay1, cerca1+=75, 10);
+    drawTransparency(img, overlay1, cerca1+=75, 10);
+    drawTransparency(img, overlay1, cerca1+=75, 10);
+    drawTransparency(img, overlay1, cerca1+=75, 10);
+    drawTransparency(img, overlay1, cerca1+=75, 10);
+    Mat overlay4 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cercaMenor.png", IMREAD_UNCHANGED);
+   // Mat overlay4 = cv::imread("cercaMenor.png", IMREAD_UNCHANGED);
+    int cerca2 = 90;
+    drawTransparency(img, overlay4, cerca2, 75);
+    drawTransparency(img, overlay4, cerca2+=38, 75);
+    drawTransparency(img, overlay4, cerca2+=38, 75);
+    drawTransparency(img, overlay4, cerca2+=38, 75);
+    drawTransparency(img, overlay4, cerca2+=38, 75);
+    cerca2 += 2*38;
+    drawTransparency(img, overlay4, cerca2+=38, 75);
+    drawTransparency(img, overlay4, cerca2+=38, 75);
+    drawTransparency(img, overlay4, cerca2+=38, 75);
+    drawTransparency(img, overlay4, cerca2+=38, 75);
+    drawTransparency(img, overlay4, cerca2+=38, 75);
+    
     color = Scalar(245,245,245);
-    putText	(img, "Placar: " + to_string(j), Point(200, 50), FONT_HERSHEY_TRIPLEX, 1.5, color); // fonte
-    putText	(img, "Recorde: " + to_string(recorde), Point(200, 100), FONT_HERSHEY_TRIPLEX, 1.5, color); // fonte
-    putText	(img, "Tempo: " + to_string(temporizador) + "s", Point(200, 150), FONT_HERSHEY_TRIPLEX, 1.5, color); // fonte
+    putText	(img, "Placar: " + to_string(j), Point(200, 55), FONT_HERSHEY_TRIPLEX, 1.5, color); // fonte
+    putText	(img, "Recorde: " + to_string(recorde), Point(115, 100), FONT_HERSHEY_TRIPLEX, 0.8, color); // fonte
+    putText	(img, "Tempo: " + to_string(temporizador) + "s", Point(390, 100), FONT_HERSHEY_TRIPLEX, 0.8, color); // fonte
+
 
     // Desenha uma imagem
-         //Mat overlay2 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\noz.png", IMREAD_UNCHANGED);
+         Mat overlay2 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\NOZSFundo.png", IMREAD_UNCHANGED);
 
-    Mat overlay2 = cv::imread("NOZSFundo.png", IMREAD_UNCHANGED);
+    //Mat overlay2 = cv::imread("NOZSFundo.png", IMREAD_UNCHANGED);
     drawTransparency(img, overlay2, laranja.getX(), laranja.getY());
 
     // Desenha o frame na tela
@@ -186,16 +201,17 @@ void drawGameOver(Mat& imgGameOver, bool& restart, bool& quit) {
     putText(imgGameOver, "Game Over", Point(100, 100), FONT_HERSHEY_SIMPLEX, 2, Scalar(0, 0, 255), 3);
     putText(imgGameOver, "Placar: " + to_string(j), Point(100, 150), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
     putText(imgGameOver, "Recorde: " + to_string(recorde), Point(100, 200), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
-    putText(imgGameOver, "Pressione 'R' para Reiniciar o jogo", Point(100, 400), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
-    putText(imgGameOver, "Pressione 'Q' para Sair do jogo", Point(100, 450), FONT_HERSHEY_SIMPLEX, 1, Scalar(255, 255, 255), 2);
+    putText(imgGameOver, "Pressione 'R' para Reiniciar o jogo", Point(100, 400), FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 255, 255), 2);
+    putText(imgGameOver, "Pressione 'Q' para Sair do jogo", Point(100, 450), FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 255, 255), 2);
 
     imshow("result", imgGameOver);
 
 
-    char key = (char)waitKey(0);
-    if (key == 'r' || key == 'R') {
+    char key1 = (char)waitKey(0);
+    if (key1 == 'r' || key1 == 'R') {
         restart = true;
-    } else if (key == 'q' || key == 'Q') {
+    }char key = (char)waitKey(0);
+     if (key == 'q' || key == 'Q') {
         quit = true;
     }
 }
@@ -224,8 +240,8 @@ int main(int argc, const char** argv)
     double scale;
     string PNG;
 
-    //cascadeName = "C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\haarcascade_frontalface_default.xml";
-    cascadeName = "haarcascade_frontalface_default.xml";
+    cascadeName = "C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\haarcascade_frontalface_default.xml";
+    //cascadeName = "haarcascade_frontalface_default.xml";
     scale = 1; // usar 1, 2, 4.
     if (scale < 1)
         scale = 1;
