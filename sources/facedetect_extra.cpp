@@ -11,7 +11,7 @@
 #include <thread>
 
 #include  "frutinha.h"
-//#include "frutinha.cpp"
+#include "frutinha.cpp"
 
 using namespace std;
 using namespace cv;
@@ -124,8 +124,8 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
         
         Rect r = faces[i];
         // Desenha uma imagem
-        Mat overlay3 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\esquiloSFundo.png", IMREAD_UNCHANGED);
-        //Mat overlay3 = cv::imread("esquiloSFundo.png", IMREAD_UNCHANGED);
+        //Mat overlay3 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\esquiloSFundo.png", IMREAD_UNCHANGED);
+        Mat overlay3 = cv::imread("esquiloSFundo.png", IMREAD_UNCHANGED);
         try{
            drawTransparency(img, overlay3, cvRound(r.x), cvRound(r.y));
             }catch(Exception e){}
@@ -141,7 +141,7 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
         if(laranja.getX() > cvRound(r.x) && laranja.getX() < cvRound((r.x + r.width-1)) && laranja.getY() > cvRound(r.y) && laranja.getY() < cvRound((r.y + r.height-1)) && laranja.getComeu() == 0){
                 j++;
                 laranja.setComeu(1);
-                //system("play -q SOM.ogg"); //som LINUX    
+                system("play -q SOM.ogg"); //som LINUX    
                 laranja.move();          
         }
         
@@ -153,8 +153,8 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
     }
 
         
-    Mat overlay1 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cerca.png", IMREAD_UNCHANGED);
-   // Mat overlay1 = cv::imread("cerca.png", IMREAD_UNCHANGED);
+    //Mat overlay1 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cerca.png", IMREAD_UNCHANGED);
+    Mat overlay1 = cv::imread("cerca.png", IMREAD_UNCHANGED);
     int cerca1 = 45;
     drawTransparency(img, overlay1, cerca1, 10);
     drawTransparency(img, overlay1, cerca1+=75, 10);
@@ -163,8 +163,8 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
     drawTransparency(img, overlay1, cerca1+=75, 10);
     drawTransparency(img, overlay1, cerca1+=75, 10);
     drawTransparency(img, overlay1, cerca1+=75, 10);
-    Mat overlay4 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cercaMenor.png", IMREAD_UNCHANGED);
-   // Mat overlay4 = cv::imread("cercaMenor.png", IMREAD_UNCHANGED);
+    //Mat overlay4 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\cercaMenor.png", IMREAD_UNCHANGED);
+    Mat overlay4 = cv::imread("cercaMenor.png", IMREAD_UNCHANGED);
     int cerca2 = 90;
     drawTransparency(img, overlay4, cerca2, 75);
     drawTransparency(img, overlay4, cerca2+=38, 75);
@@ -185,9 +185,9 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade, double scale, bool try
 
 
     // Desenha uma imagem
-         Mat overlay2 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\NOZSFundo.png", IMREAD_UNCHANGED);
-
-    //Mat overlay2 = cv::imread("NOZSFundo.png", IMREAD_UNCHANGED);
+         //Mat overlay2 = cv::imread("C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\NOZSFundo.png", IMREAD_UNCHANGED);
+         Mat overlay2 = cv::imread("NOZSFundo.png", IMREAD_UNCHANGED);
+   
     drawTransparency(img, overlay2, laranja.getX(), laranja.getY());
 
     // Desenha o frame na tela
@@ -240,8 +240,8 @@ int main(int argc, const char** argv)
     double scale;
     string PNG;
 
-    cascadeName = "C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\haarcascade_frontalface_default.xml";
-    //cascadeName = "haarcascade_frontalface_default.xml";
+    //cascadeName = "C:\\Users\\biamo\\codigos\\projeto-openCV\\projeto-openCV\\haarcascade_frontalface_default.xml";
+    cascadeName = "haarcascade_frontalface_default.xml";
     scale = 1; // usar 1, 2, 4.
     if (scale < 1)
         scale = 1;
@@ -309,7 +309,7 @@ int main(int argc, const char** argv)
                     temporizador = duration_cast<seconds>(gasto).count();
                     cout << "Tempo: " << temporizador << "s" << endl;
 
-                    if (iniciarContagem && temporizador >= 5) {
+                    if (iniciarContagem && temporizador >= 10) {
                         jogoIniciado = false;
                         menuAtivo = true;
                         iniciarContagem = false;
@@ -319,6 +319,8 @@ int main(int argc, const char** argv)
                     if (!jogoIniciado && menuAtivo) {
                         drawGameOver(frame, jogoIniciado, menuAtivo);
                         temporizador = 0;
+                        start = steady_clock::now();
+                        iniciarContagem = true;
                         j = 0;
                     }
 
