@@ -1,6 +1,6 @@
 # Tema: Jogo do Esquilo
 
-Trabalho final da disciplina de Linguagem de Programação I, o projeto consiste em um jogo no qual o jogador é identificado por um detector de face e o seu objetivo é coletar o máximo de nozes num netervalo de tempo de 30 segundos.
+Trabalho final da disciplina de Linguagem de Programação I, o projeto consiste em um jogo no qual o jogador é identificado por um detector de face e o seu objetivo é coletar o máximo de nozes num intervalo de 30 segundos.
 
 Professores: Derzu Omaia e Marcelo Iury
 
